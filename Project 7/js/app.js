@@ -1,84 +1,89 @@
-const qwerty = document.getElementById('qwerty');
+const qwerty = document.querySelector('#qwerty');
 const phrase = document.getElementById('phrase');
 const starter = document.querySelector('.btn__reset');
 let missed = 0;
 
-const phrases = ['one piece', 'attack on titan', 'dragonball', 'black clover', 'naruto'];
-
+const phrases = ['one piece','attack on titan','dragonball','black clover','naruto'];
 
 function getRandomPhraseAsArray(arr) {
-  //do stuff to any arr that is passed in
-  return arr[Math.round(Math.random() * arr.length)].split('');
+  return arr[Math.round(Math.random() * (arr.length - 1))].split('');
 }
 
 function addPhraseToDisplay(arr) {
-  // do stuff any arr that is passed in, and add to `#phrase ul`
-  for(let i = 0; i < arr.length; i++) {
+  for (let i = 0; i < arr.length; i++) {
     const li = document.createElement('li');
-    const ul = document.querySelector('#phrase ul');
-    li.textContent = arr[i];
-  if (arr[i] != ' ' ) {
-    li.className = 'letter';
-  } else {
-    li.className = 'space';
-  }
-  ul.appendChild(li);
- }
-}
+    li.textContent = arr[i].toUpperCase();
+    document.querySelector('ul').appendChild(li);
 
-starter.addEventListener('click', () => {
-  const overlay = document.getElementById('overlay');
-    if (starter.textContent === 'Start Game') {
-    overlay.style.display = 'none';
-  } else {
-    restart();
-  }
-  });
-
-  getRandomPhraseAsArray(phrases);
-
-  const phraseArray = getRandomPhraseAsArray(phrases);
-  addPhraseToDisplay(phraseArray);
-
-qwerty.addEventLister('click', (e) => {
-  const buttonKey = e.target;
-  if(e.target.tagName === 'button') {
-    buttonKey.className = 'chosen';
-    buttonKey.disabled = true;
-  }
-  const letterFound = checkLetter(buttonKey);
-
-  if (letterFound == null) {
-    missed += 1;
-  }
-  checkWin();
-});
-
-function checkLetter(button) {
-  const letter = document.querySelectorAll('.letter');
-  for(let i = 0; i < letter.length; i++) {
-    if(button.textContent == letter[i].textContent) {
-      letter[i].className = 'show';
+    if (arr[i] != ' ') {
+      li.classList.add('letter');
     } else {
-      return null;
+      li.classList.add('space');
     }
   }
+}
+
+function checkLetter(button) {
+  const letters = document.querySelectorAll('.letter');
+  let match = null;
+
+  for (let i = 0; i < letters.length; i++) {
+    if (button.textContent.toUpperCase() == letters[i].textContent) {
+      match = button.textContent;
+      letters[i].classList.add('show');
+    }
+  }
+  return match;
 }
 
 function checkWin() {
   const show = document.querySelectorAll('.show');
   const letter = document.querySelectorAll('.letter');
-  const overlay = document.getElementById('overlay');
+  const overlay = document.querySelector('#overlay');
 
-  if(show.length == letter.length) {
-    overlay.className = 'win';
+  if (show.length == letter.length) {
+    overlay.classList.add = 'win';
     overlay.textContent = "You've won";
-  } else if(missed >= 5) {
-    overlay.className = 'lose';
+    overlay.style.display = '';
+  } else if (missed === 5) {
+    overlay.classList.add = 'lose';
     overlay.textContent = "You've lost. Play again";
+    overlay.style.display = '';
   }
 }
 
 function restart() {
-  Location.reload();
+  location.reload();
 }
+
+starter.addEventListener('click', () => {
+  if (starter.textContent === 'Start Game') {
+    starter.parentElement.style.display = 'none';
+  } else {
+    restart();
+  }
+});
+
+qwerty.addEventListener('click', (event) => {
+const buttonKey = event.target;
+
+    if (event.target.tagName === 'BUTTON') {
+    buttonKey.className = 'chosen';
+    buttonKey.disabled = true;
+
+    const letterFound = checkLetter(buttonKey);
+
+    if (letterFound === null) {
+      missed += 1;
+    }
+
+    if (missed >= 1 && missed <= 5) {
+      const hearts = document.getElementsByTagName('img');
+      hearts[missed - 1].src = 'images/lostHeart.png';
+    }
+  }
+    checkWin();
+  });
+
+const phraseArray = getRandomPhraseAsArray(phrases);
+addPhraseToDisplay(phraseArray);
